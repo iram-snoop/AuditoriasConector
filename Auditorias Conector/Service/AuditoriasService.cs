@@ -1,5 +1,8 @@
 ﻿using Auditorias_Conector.DataAccess;
 using Auditorias_Conector.Models.DAO;
+using Auditorias_Conector.Models.DTO;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Auditorias_Conector.Service
 {
@@ -12,10 +15,10 @@ namespace Auditorias_Conector.Service
             _auditoriaAccess = auditoriasAccess;
         }
 
-        public AuditoriaDAO GetAuditoriaDAO()
+        public FacturaPedidoVentaDTO GetAuditoriaDAO()
         {
             var result = _auditoriaAccess.GetAuditoriaJson();
-            return result;
+            return JsonConvert.DeserializeObject<FacturaPedidoVentaDTO>(result.JsonResult);
         }
     }
 }

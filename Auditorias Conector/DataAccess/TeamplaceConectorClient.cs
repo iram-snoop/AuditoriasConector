@@ -1,4 +1,5 @@
 ﻿using Auditorias_Conector.Models.DAO;
+using Auditorias_Conector.Models.DTO;
 using System.Net.Http;
 
 namespace Auditorias_Conector.DataAccess
@@ -13,7 +14,7 @@ namespace Auditorias_Conector.DataAccess
             teamplaceClient.BaseAddress = new Uri("https://localhost:51021"); // Configura la base address aquí
         }
 
-        public async Task PedidoVenta(AuditoriaDAO json)
+        public async Task PedidoVenta(FacturaPedidoVentaDTO json)
         {
             try
             {

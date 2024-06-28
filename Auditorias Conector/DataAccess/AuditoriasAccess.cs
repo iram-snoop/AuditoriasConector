@@ -45,7 +45,6 @@ namespace Auditorias_Conector.DataAccess
             }
             catch (Exception ex)
             {
-                // Log the exception
                 throw new InvalidOperationException("An error occurred while getting auditoria json.", ex);
             }
         }
