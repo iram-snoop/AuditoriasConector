@@ -1,52 +1,50 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Auditorias_Conector.DataAccess;
+using Auditorias_Conector.Service;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace Auditorias_Conector
 {
     public static class StartupConfiguration
     {
-        public static IServiceCollection ConfigureSwagger(this IServiceCollection services,
-                IConfiguration configuration,
-                string groupName)
+        public static IServiceCollection ConfigureSwagger(this IServiceCollection services, IConfiguration configuration, string groupName)
         {
             var openApiInfo = new OpenApiInfo();
             configuration.GetSection("Application").Bind(openApiInfo);
-            var swaggerVersions = new HashSet<string>();
 
             services.AddSwaggerGen(c =>
             {
-                var existing = c.SwaggerGeneratorOptions.SwaggerDocs.ContainsKey("v1");
-                if (!existing)
-                {
-                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auditorias Connector", Version = "v1" });
-                }
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auditorias Connector", Version = "v1" });
                 // Otras configuraciones de Swagger
             });
 
-
             return services;
         }
 
-        //public static IServiceCollection ConfigureDbContexts(this IServiceCollection services, IConfiguration Configuration)
-        //{
-        //    //services.AddDbContext<ContextDB>(options =>
-        //    //    options.UseSqlServer(Configuration.GetConnectionString("TeamplaceCache"), sqlServerOptions => sqlServerOptions.CommandTimeout(90)),
-        //    //    ServiceLifetime.Scoped);
+        public static IServiceCollection ConfigureDbContexts(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<ContextDB>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("Auditorias"), sqlServerOptions => sqlServerOptions.CommandTimeout(90)),
+                ServiceLifetime.Scoped);
 
-        //    //return services;
-        //}
+            return services;
+        }
 
         public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<AuditoriasService>();
+            services.AddScoped<AuditoriasAccess>();
 
-            //services.AddScoped<UnitOfWork>();
-            //services.AddSingleton<IConfigurationManager, ConfiguracionManager>();
+            // Registrar IHttpClientFactory
+            services.AddHttpClient();
+
+            // Registro de TeamplaceConnectorClient
+            services.AddScoped<TeamplaceConnectorClient>();
 
             return services;
         }
 
-        public static IServiceCollection AddConfig<T>(
-                    this IServiceCollection services,
-                    IConfiguration configuration, string sectionName = "") where T : class, new()
+        public static IServiceCollection AddConfig<T>(this IServiceCollection services, IConfiguration configuration, string sectionName = "") where T : class, new()
         {
             var config = string.IsNullOrEmpty(sectionName) ? configuration : configuration.GetSection(sectionName);
             var t = new T();

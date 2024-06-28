@@ -1,4 +1,7 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Auditorias_Conector.DataAccess;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Net.Http;
 
 namespace Auditorias_Conector
 {
@@ -13,18 +16,14 @@ namespace Auditorias_Conector
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddDbContext<ContextDB>(options =>
+    options.UseSqlServer(Configuration.GetConnectionString("Auditorias")));
+
             services.AddControllers();
 
             // Configuración de Swagger
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Version = "v1",
-                    Title = "Auditorias Connector",
-                    Description = "My ASP.NET Core Web API"
-                });
-            });
+            services.ConfigureSwagger(Configuration, "v1");
 
             services.AddCors(options =>
             {
@@ -32,12 +31,20 @@ namespace Auditorias_Conector
                                   builder =>
                                   {
                                       builder.AllowAnyOrigin()
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader();
+                                             .AllowAnyMethod()
+                                             .AllowAnyHeader();
                                   });
             });
 
-            // Configuraciones adicionales si es necesario
+            // Registrar IHttpClientFactory
+            services.AddHttpClient();
+
+            // Registrar servicios adicionales
+            services.ConfigureDbContexts(Configuration);
+            services.ConfigureServices(Configuration);
+
+            // Registro explícito del TeamplaceConnectorClient
+            services.AddScoped<TeamplaceConnectorClient>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
