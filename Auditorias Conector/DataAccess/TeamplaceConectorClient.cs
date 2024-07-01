@@ -1,17 +1,18 @@
-﻿using Auditorias_Conector.Models.DAO;
+﻿using Auditorias_Conector.Interfaces;
 using Auditorias_Conector.Models.DTO;
-using System.Net.Http;
+using Auditorias_Conector.Service;
 
 namespace Auditorias_Conector.DataAccess
 {
     public class TeamplaceConnectorClient
     {
         private HttpClient teamplaceClient = new();
+        private readonly ILoggerService loggerService;
 
-        public TeamplaceConnectorClient(IHttpClientFactory clientFactory)
+        public TeamplaceConnectorClient(IHttpClientFactory clientFactory, ILoggerService loggerService)
         {
             teamplaceClient = clientFactory.CreateClient("teamplace");
-            teamplaceClient.BaseAddress = new Uri("https://localhost:51021"); // Configura la base address aquí
+            this.loggerService = loggerService;
         }
 
         public async Task PedidoVenta(FacturaPedidoVentaDTO json)
@@ -21,9 +22,10 @@ namespace Auditorias_Conector.DataAccess
                 var query = "/Actions/pedidoVenta";
                 JsonContent content = JsonContent.Create(json);
                 var response = await teamplaceClient.PostAsync(query, content);
-
+                loggerService.Info(response + "response de PostAsync al teamplace conector");
                 if (!response.IsSuccessStatusCode)
                 {
+                    loggerService.Error(response + "error al crear pedido venta");
                     throw new Exception("Ocurrio un error al crear el pedido venta");
                 }
             }

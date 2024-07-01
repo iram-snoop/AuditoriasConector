@@ -1,4 +1,7 @@
-﻿namespace Auditorias_Conector
+﻿using Auditorias_Conector.Interfaces;
+using Auditorias_Conector.Service;
+
+namespace Auditorias_Conector
 {
     public class Program
     {

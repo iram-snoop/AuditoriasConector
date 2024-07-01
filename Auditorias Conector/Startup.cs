@@ -1,7 +1,5 @@
 ﻿using Auditorias_Conector.DataAccess;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using System.Net.Http;
 
 namespace Auditorias_Conector
 {
@@ -18,7 +16,12 @@ namespace Auditorias_Conector
         {
 
             services.AddDbContext<ContextDB>(options =>
-    options.UseSqlServer(Configuration.GetConnectionString("Auditorias")));
+            options.UseSqlServer(Configuration.GetConnectionString("Auditorias")));
+
+            services.AddHttpClient("teamplace", client =>
+            {
+                client.BaseAddress = new Uri(Configuration["TeamplaceBaseUrl"]);
+            });
 
             services.AddControllers();
 

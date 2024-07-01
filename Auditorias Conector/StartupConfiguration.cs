@@ -1,4 +1,5 @@
 ﻿using Auditorias_Conector.DataAccess;
+using Auditorias_Conector.Interfaces;
 using Auditorias_Conector.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -35,11 +36,13 @@ namespace Auditorias_Conector
             services.AddScoped<AuditoriasService>();
             services.AddScoped<AuditoriasAccess>();
 
+
             // Registrar IHttpClientFactory
             services.AddHttpClient();
 
             // Registro de TeamplaceConnectorClient
             services.AddScoped<TeamplaceConnectorClient>();
+            services.AddSingleton<ILoggerService, LoggerService>();
 
             return services;
         }

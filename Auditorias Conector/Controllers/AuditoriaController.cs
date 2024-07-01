@@ -22,9 +22,16 @@ namespace Auditorias_Conector.Controllers
         [HttpGet]
         public async Task<IActionResult> Auditoria()
         {
-            var jsonResult = _auditoriasService.GetAuditoriaDAO();
-            await _teamplaceConnectorClient.PedidoVenta(jsonResult);
-            return Ok();
+            try
+            {
+                var jsonResult = _auditoriasService.GetAuditoriaDAO();
+                await _teamplaceConnectorClient.PedidoVenta(jsonResult);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
