@@ -112,7 +112,7 @@ public class Participante
 public class Producto
 {
     public string Concepto { get; set; }
-    public int Cantidad { get; set; }
+    public float Cantidad { get; set; }
     public float Monto { get; set; }
     public string ProductoCodigo { get; set; }
 }
