@@ -1,5 +1,4 @@
-﻿using Auditorias_Conector.Models.DAO;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Data;
 
 namespace Auditorias_Conector.DataAccess

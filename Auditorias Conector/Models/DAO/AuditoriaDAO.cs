@@ -126,6 +126,7 @@ public class OrdenFacturacion
     public int MontoDescuento { get; set; }
     public bool EsIncompany { get; set; }
     public string ProductoCodigo { get; set; }
+    public string? Descripcion { get; set; }
 
     [NotMapped]
     public List<Participante> Participantes { get; set; }

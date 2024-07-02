@@ -1,5 +1,4 @@
 ﻿using Auditorias_Conector.DataAccess;
-using Auditorias_Conector.Models.DAO;
 
 namespace Auditorias_Conector
 {
