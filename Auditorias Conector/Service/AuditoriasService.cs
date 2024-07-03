@@ -23,7 +23,7 @@ namespace Auditorias_Conector.Service
         public void SaveNombre(string nombre, string identificacionExterna)
         {
             var idExt = Regex.Replace(identificacionExterna, @"[^\d]", "");
-             _auditoriaAccess.SaveNombre(nombre, idExt);
+            _auditoriaAccess.SaveNombre(nombre, idExt);
         }
     }
 }

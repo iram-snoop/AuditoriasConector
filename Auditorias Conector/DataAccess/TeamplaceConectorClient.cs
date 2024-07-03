@@ -1,7 +1,6 @@
 ﻿using Auditorias_Conector.Interfaces;
 using Auditorias_Conector.Models.DTO;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace Auditorias_Conector.DataAccess
 {

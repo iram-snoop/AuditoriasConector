@@ -1,11 +1,8 @@
-﻿using Auditorias_Conector.Service;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using System.Configuration;
 using System.Data;
 
 namespace Auditorias_Conector.DataAccess
@@ -44,7 +41,7 @@ namespace Auditorias_Conector.DataAccess
                                 transaction: _context.Database.CurrentTransaction?.GetDbTransaction(),
                                 commandType: CommandType.StoredProcedure);
 
-                   return items.FirstOrDefault();
+                    return items.FirstOrDefault();
                 }
             }
             catch (Exception ex)
