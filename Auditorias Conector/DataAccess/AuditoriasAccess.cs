@@ -50,7 +50,7 @@ namespace Auditorias_Conector.DataAccess
             }
         }
 
-        public void SaveNombre(string nombre, string identificacionExterna)
+        public void SaveNombre(string nombre, int identificacionExterna)
         {
             try
             {
