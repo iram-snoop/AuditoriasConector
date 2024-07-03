@@ -1,6 +1,7 @@
 ﻿using Auditorias_Conector.DataAccess;
 using Auditorias_Conector.Models.DTO;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace Auditorias_Conector.Service
 {
@@ -17,6 +18,12 @@ namespace Auditorias_Conector.Service
         {
             var result = _auditoriaAccess.GetAuditoriaJson();
             return JsonConvert.DeserializeObject<FacturaPedidoVentaDTO>(result.JsonResult);
+        }
+
+        public void SaveNombre(string nombre, string identificacionExterna)
+        {
+            var idExt = Regex.Replace(identificacionExterna, @"[^\d]", "");
+             _auditoriaAccess.SaveNombre(nombre, idExt);
         }
     }
 }

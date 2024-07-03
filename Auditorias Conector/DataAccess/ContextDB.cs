@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Auditorias_Conector.Models.DTO;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 
 namespace Auditorias_Conector.DataAccess
@@ -47,6 +48,9 @@ namespace Auditorias_Conector.DataAccess
                     .HasNoKey();
 
             modelBuilder.Entity<Producto>()
+                    .HasNoKey();
+
+            modelBuilder.Entity<GetNombreByIdExterna>()
                     .HasNoKey();
         }
     }
