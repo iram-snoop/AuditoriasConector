@@ -37,22 +37,29 @@ namespace Auditorias_Conector.DataAccess
                         connection.Open();
                     }
 
-                    // Set the command timeout to 60 seconds (or any desired value)
-                    var commandTimeout = 120;
+                    // Establecer el tiempo de espera del comando a 60 segundos (o cualquier valor deseado)
+                    var commandTimeout = 60;
 
                     var items = connection.Query<AuditoriaDAO>("facturacionAuditorias",
                                 transaction: _context.Database.CurrentTransaction?.GetDbTransaction(),
-                                commandTimeout: commandTimeout, // Here we set the timeout
+                                commandTimeout: commandTimeout, // Aquí se establece el tiempo de espera
                                 commandType: CommandType.StoredProcedure);
 
                     return items.FirstOrDefault();
                 }
             }
+            catch (SqlException sqlEx)
+            {
+                // Registro de errores específicos de SQL
+                throw new InvalidOperationException("Error de SQL al obtener el JSON de auditoría.", sqlEx);
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("An error occurred while getting auditoria json.", ex);
+                // Registro de otros tipos de errores
+                throw new InvalidOperationException("Ocurrió un error al obtener el JSON de auditoría.", ex);
             }
         }
+
 
 
         public void SaveNombre(string nombre, int identificacionExterna)
