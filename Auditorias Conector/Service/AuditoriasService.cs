@@ -32,25 +32,35 @@ namespace Auditorias_Conector.Service
                 {
                     jsonResult = JsonConvert.DeserializeObject<FacturaPedidoVentaDTO>(result.JsonResult);
 
-                    var ifResultadoIsError = await _teamplaceConnectorClient.PedidoVenta(jsonResult);
-                    var nombre = await _teamplaceConnectorClient.NumeroTransaccion(jsonResult.IdentificacionExterna);
-
-                    if (!String.IsNullOrEmpty(ifResultadoIsError))
+                    try
                     {
-                        SaveError(ifResultadoIsError, jsonResult.IdentificacionExterna);
-                    }
+                        var ifResultadoIsError = await _teamplaceConnectorClient.PedidoVenta(jsonResult);
+                        var nombre = await _teamplaceConnectorClient.NumeroTransaccion(jsonResult.IdentificacionExterna);
 
-                    if (nombre != null)
-                    {
-                        foreach (var item in nombre)
+                        if (!String.IsNullOrEmpty(ifResultadoIsError))
                         {
-                            SaveNombre(item.Nombre, jsonResult.IdentificacionExterna);
+                            SaveError(ifResultadoIsError, jsonResult.IdentificacionExterna);
                         }
+
+                        if (nombre != null)
+                        {
+                            foreach (var item in nombre)
+                            {
+                                SaveNombre(item.Nombre, jsonResult.IdentificacionExterna);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Manejar la excepción según lo que sea adecuado para tu aplicación
+                        Console.WriteLine($"Error en el procesamiento de Auditoria: {ex.Message}");
+                        // Puedes decidir si quieres continuar con el siguiente ciclo o no
                     }
                 }
 
             } while (jsonResult != null);
         }
+
 
         public void SaveNombre(string nombre, string identificacionExterna)
         {
