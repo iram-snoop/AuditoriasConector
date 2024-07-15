@@ -15,7 +15,7 @@ namespace Auditorias_Conector.DataAccess
             this.loggerService = loggerService;
         }
 
-        public async Task PedidoVenta(FacturaPedidoVentaDTO json)
+        public async Task<string> PedidoVenta(FacturaPedidoVentaDTO json)
         {
             try
             {
@@ -28,15 +28,18 @@ namespace Auditorias_Conector.DataAccess
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
                     loggerService.Error($"Error al crear pedido venta: {errorContent}");
-                    throw new Exception($"Ocurrió un error al crear el pedido venta: {response.ReasonPhrase}");
+                    return errorContent; // Devuelve el contenido del error
                 }
+
+                return string.Empty; // Devuelve una cadena vacía si no hay error
             }
             catch (Exception e)
             {
-                loggerService.Error($"Exception: {e.Message}");
-                throw new Exception(e.Message);
+                loggerService.Error($"Excepción: {e.Message}");
+                return e.Message; // Devuelve el mensaje de la excepción en lugar de lanzar una nueva excepción
             }
         }
+
 
 
         public async Task<List<GetNombreByIdExterna>> NumeroTransaccion(string identificadorExterno)

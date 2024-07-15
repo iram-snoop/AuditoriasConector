@@ -20,21 +20,21 @@ namespace Auditorias_Conector.Controllers
         [HttpGet]
         [Route("Facturar")]
 
-        public async Task<IActionResult> Auditoria()
+        public async Task<ActionResult> Auditoria()
         {
             try
             {
-                var jsonResult = _auditoriasService.GetAuditoriaDAO();
-                await _teamplaceConnectorClient.PedidoVenta(jsonResult);
-                var nombre = await _teamplaceConnectorClient.NumeroTransaccion(jsonResult.IdentificacionExterna);
+                await _auditoriasService.GetAuditoriaDAO();
+                //await _teamplaceConnectorClient.PedidoVenta(jsonResult);
+                //var nombre = await _teamplaceConnectorClient.NumeroTransaccion(jsonResult.IdentificacionExterna);
 
-                if (nombre != null)
-                {
-                    foreach (var item in nombre)
-                    {
-                        _auditoriasService.SaveNombre(item.Nombre, jsonResult.IdentificacionExterna);
-                    }
-                }
+                //if (nombre != null)
+                //{
+                //    foreach (var item in nombre)
+                //    {
+                //        _auditoriasService.SaveNombre(item.Nombre, jsonResult.IdentificacionExterna);
+                //    }
+                //}
 
                 return Ok();
             }

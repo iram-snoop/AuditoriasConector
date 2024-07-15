@@ -1,5 +1,8 @@
 ﻿using Auditorias_Conector.DataAccess;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Auditorias_Conector.Service;
+using Auditorias_Conector.Interfaces;
 
 namespace Auditorias_Conector
 {
@@ -14,9 +17,8 @@ namespace Auditorias_Conector
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddDbContext<ContextDB>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("Auditorias")));
+                options.UseSqlServer(Configuration.GetConnectionString("Auditorias")));
 
             services.AddHttpClient("teamplace", client =>
             {
@@ -24,6 +26,16 @@ namespace Auditorias_Conector
             });
 
             services.AddControllers();
+
+            services.AddHangfire(x =>
+            {
+                x.UseSqlServerStorage(Configuration.GetConnectionString("AuditoriasHangfire"));
+            });
+
+            services.AddHangfireServer(options =>
+            {
+                options.WorkerCount = 1; // Limitar la cantidad de trabajadores
+            });
 
             // Configuración de Swagger
             services.ConfigureSwagger(Configuration, "v1");
@@ -39,16 +51,22 @@ namespace Auditorias_Conector
                                   });
             });
 
+            // Registro explícito del TeamplaceConnectorClient y AuditoriasService
+            services.AddScoped<TeamplaceConnectorClient>();
+            services.AddScoped<AuditoriasService>();
+
             // Registrar IHttpClientFactory
             services.AddHttpClient();
 
-            // Registrar servicios adicionales
+            // Registrar ILoggerService e AuditoriasAccess
+            services.AddScoped<ILoggerService, LoggerService>(); // Reemplaza LoggerService con tu implementación concreta
+            services.AddScoped<AuditoriasAccess>(); // Registrar AuditoriasAccess si es una clase concreta
+
+            // Otros servicios necesarios
             services.ConfigureDbContexts(Configuration);
             services.ConfigureServices(Configuration);
-
-            // Registro explícito del TeamplaceConnectorClient
-            services.AddScoped<TeamplaceConnectorClient>();
         }
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -72,6 +90,15 @@ namespace Auditorias_Conector
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Auditorias Connector v1");
                 c.RoutePrefix = string.Empty;
             });
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = Enumerable.Empty<Hangfire.Dashboard.IDashboardAuthorizationFilter>()
+            });
+
+            // Programar el trabajo recurrente con Hangfire
+            var interval = Configuration.GetValue<string>("JobSchedule:Interval");
+            RecurringJob.AddOrUpdate<AuditoriasService>("get-auditoria-dao", service => service.GetAuditoriaDAO(), Cron.MinuteInterval(30)); // Ejemplo: cada 30 minutos
 
             app.UseEndpoints(endpoints =>
             {

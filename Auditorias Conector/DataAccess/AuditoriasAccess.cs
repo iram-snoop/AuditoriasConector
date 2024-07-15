@@ -30,7 +30,7 @@ namespace Auditorias_Conector.DataAccess
         {
             try
             {
-                using (var connection = _context.Connection)
+                using (var connection = new SqlConnection(_configuration.GetConnectionString("Auditorias")))
                 {
                     if (connection.State == ConnectionState.Closed)
                     {
@@ -81,6 +81,45 @@ namespace Auditorias_Conector.DataAccess
             catch (Exception ex)
             {
                 string errorMessage = "Ocurrió un error al guardar nombre en orden de facturación.";
+                errorMessage += $"\nTipo de excepción: {ex.GetType().FullName}";
+                errorMessage += $"\nMensaje: {ex.Message}";
+                errorMessage += $"\nStack Trace: {ex.StackTrace}";
+
+                throw new InvalidOperationException(errorMessage, ex);
+            }
+        }
+
+        public void SaveError(string error, int identificacionExterna)
+        {
+            try
+            {
+                string connectionString = _configuration.GetConnectionString("Auditorias");
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    var parameters = new
+                    {
+                        IdentificacionExterna = identificacionExterna,
+                        Error = error
+                    };
+
+                    connection.Execute(
+                        "ConcatenarError",
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
+
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = "Ocurrió un error al guardar error en orden de facturación.";
                 errorMessage += $"\nTipo de excepción: {ex.GetType().FullName}";
                 errorMessage += $"\nMensaje: {ex.Message}";
                 errorMessage += $"\nStack Trace: {ex.StackTrace}";
