@@ -37,8 +37,12 @@ namespace Auditorias_Conector.DataAccess
                         connection.Open();
                     }
 
+                    // Set the command timeout to 60 seconds (or any desired value)
+                    var commandTimeout = 120;
+
                     var items = connection.Query<AuditoriaDAO>("facturacionAuditorias",
                                 transaction: _context.Database.CurrentTransaction?.GetDbTransaction(),
+                                commandTimeout: commandTimeout, // Here we set the timeout
                                 commandType: CommandType.StoredProcedure);
 
                     return items.FirstOrDefault();
@@ -49,6 +53,7 @@ namespace Auditorias_Conector.DataAccess
                 throw new InvalidOperationException("An error occurred while getting auditoria json.", ex);
             }
         }
+
 
         public void SaveNombre(string nombre, int identificacionExterna)
         {
