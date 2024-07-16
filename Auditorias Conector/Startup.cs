@@ -3,6 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using Auditorias_Conector.Service;
 using Auditorias_Conector.Interfaces;
+using Hangfire;
 
 namespace Auditorias_Conector
 {
@@ -27,15 +28,15 @@ namespace Auditorias_Conector
 
             services.AddControllers();
 
-            //services.AddHangfire(x =>
-            //{
-            //    x.UseSqlServerStorage(Configuration.GetConnectionString("AuditoriasHangfire"));
-            //});
+            services.AddHangfire(x =>
+            {
+                x.UseSqlServerStorage(Configuration.GetConnectionString("AuditoriasHangfire"));
+            });
 
-            //services.AddHangfireServer(options =>
-            //{
-            //    options.WorkerCount = 1; // Limitar la cantidad de trabajadores
-            //});
+            services.AddHangfireServer(options =>
+            {
+                options.WorkerCount = 1; // Limitar la cantidad de trabajadores
+            });
 
             // Configuración de Swagger
             services.ConfigureSwagger(Configuration, "v1");
@@ -91,14 +92,14 @@ namespace Auditorias_Conector
                 c.RoutePrefix = string.Empty;
             });
 
-            //app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            //{
-            //    Authorization = Enumerable.Empty<Hangfire.Dashboard.IDashboardAuthorizationFilter>()
-            //});
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = Enumerable.Empty<Hangfire.Dashboard.IDashboardAuthorizationFilter>()
+            });
 
-            //// Programar el trabajo recurrente con Hangfire
-            //var interval = Configuration.GetValue<string>("JobSchedule:Interval");
-            //RecurringJob.AddOrUpdate<AuditoriasService>("get-auditoria-dao", service => service.GetAuditoriaDAO(), Cron.MinuteInterval(30)); // Ejemplo: cada 30 minutos
+            // Programar el trabajo recurrente con Hangfire
+            var interval = Configuration.GetValue<string>("JobSchedule:Interval");
+            RecurringJob.AddOrUpdate<AuditoriasService>("get-auditoria-dao", service => service.GetAuditoriaDAO(), Cron.MinuteInterval(30)); // Ejemplo: cada 30 minutos
 
             app.UseEndpoints(endpoints =>
             {
