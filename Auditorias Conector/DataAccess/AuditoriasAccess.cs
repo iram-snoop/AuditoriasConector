@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using Auditorias_Conector.Service;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -44,7 +45,6 @@ namespace Auditorias_Conector.DataAccess
                                 transaction: _context.Database.CurrentTransaction?.GetDbTransaction(),
                                 commandTimeout: commandTimeout, // Aquí se establece el tiempo de espera
                                 commandType: CommandType.StoredProcedure);
-
                     return items.FirstOrDefault();
                 }
             }

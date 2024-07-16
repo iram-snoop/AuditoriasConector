@@ -42,7 +42,8 @@ namespace Auditorias_Conector
 
             // Registro de TeamplaceConnectorClient
             services.AddScoped<TeamplaceConnectorClient>();
-            services.AddSingleton<ILoggerService, LoggerService>();
+            //services.AddSingleton<ILoggerService, LoggerService>();
+            services.AddSingleton<LoggerService>();
 
             return services;
         }

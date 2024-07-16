@@ -25,16 +25,6 @@ namespace Auditorias_Conector.Controllers
             try
             {
                 await _auditoriasService.GetAuditoriaDAO();
-                //await _teamplaceConnectorClient.PedidoVenta(jsonResult);
-                //var nombre = await _teamplaceConnectorClient.NumeroTransaccion(jsonResult.IdentificacionExterna);
-
-                //if (nombre != null)
-                //{
-                //    foreach (var item in nombre)
-                //    {
-                //        _auditoriasService.SaveNombre(item.Nombre, jsonResult.IdentificacionExterna);
-                //    }
-                //}
 
                 return Ok();
             }

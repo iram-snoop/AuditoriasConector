@@ -9,11 +9,12 @@ namespace Auditorias_Conector.Service
     {
         private AuditoriasAccess _auditoriaAccess;
         private readonly TeamplaceConnectorClient _teamplaceConnectorClient;
-
-        public AuditoriasService(AuditoriasAccess auditoriasAccess, TeamplaceConnectorClient teamplaceConnectorClient)
+        private LoggerService _loggerService;
+        public AuditoriasService(AuditoriasAccess auditoriasAccess, TeamplaceConnectorClient teamplaceConnectorClient, LoggerService loggerService)
         {
             _auditoriaAccess = auditoriasAccess;
             _teamplaceConnectorClient = teamplaceConnectorClient;
+            _loggerService = loggerService;
         }
 
         public async Task GetAuditoriaDAO()
@@ -35,6 +36,7 @@ namespace Auditorias_Conector.Service
                     try
                     {
                         var ifResultadoIsError = await _teamplaceConnectorClient.PedidoVenta(jsonResult);
+                        _loggerService.Info(ifResultadoIsError);
                         var nombre = await _teamplaceConnectorClient.NumeroTransaccion(jsonResult.IdentificacionExterna);
 
                         if (!String.IsNullOrEmpty(ifResultadoIsError))
@@ -54,6 +56,7 @@ namespace Auditorias_Conector.Service
                     {
                         // Manejar la excepción según lo que sea adecuado para tu aplicación
                         Console.WriteLine($"Error en el procesamiento de Auditoria: {ex.Message}");
+                        _loggerService.Error(ex.Message + "Error en auditoriaService");
                         // Puedes decidir si quieres continuar con el siguiente ciclo o no
                     }
                 }
@@ -64,10 +67,18 @@ namespace Auditorias_Conector.Service
 
         public void SaveNombre(string nombre, string identificacionExterna)
         {
-            var idExt = Regex.Replace(identificacionExterna, @"[^\d]", "");
-            int idExtInt = int.Parse(idExt);
+            try
+            {
+                var idExt = Regex.Replace(identificacionExterna, @"[^\d]", "");
+                int idExtInt = int.Parse(idExt);
 
-            _auditoriaAccess.SaveNombre(nombre, idExtInt);
+                _auditoriaAccess.SaveNombre(nombre, idExtInt);
+            }
+            catch (Exception ex)
+            {
+                _loggerService.Error(ex.Message + "error en save nombre");
+                throw new Exception(ex.Message, ex);
+            }
         }
 
         public void SaveError(string error, string identificacionExterna)
