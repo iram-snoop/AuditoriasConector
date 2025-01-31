@@ -1,4 +1,4 @@
-﻿using Auditorias_Conector.Service;
+﻿using Auditorias_Conector.Models.DTO;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -137,6 +137,27 @@ namespace Auditorias_Conector.DataAccess
                 errorMessage += $"\nStack Trace: {ex.StackTrace}";
 
                 throw new InvalidOperationException(errorMessage, ex);
+            }
+        }
+
+
+        public async Task<IEnumerable<PersonaBasicaDTO>> GetPersonasCore()
+        {
+            string connectionString = _configuration.GetConnectionString("PersonalTemporal");
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State == ConnectionState.Closed)
+                {
+                    await connection.OpenAsync();
+                }
+
+                var result = await connection.QueryAsync<PersonaBasicaDTO>(
+                    "PersonasTemporales2", 
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return result;
             }
         }
     }

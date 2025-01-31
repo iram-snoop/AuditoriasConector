@@ -88,5 +88,12 @@ namespace Auditorias_Conector.Service
 
             _auditoriaAccess.SaveError(error, idExtInt);
         }
+
+
+        public async Task<IEnumerable<PersonaBasicaDTO>> GetPersonasCore()
+        {
+            var personas = await _auditoriaAccess.GetPersonasCore();
+            return personas;
+        }
     }
 }

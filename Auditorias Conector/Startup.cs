@@ -38,6 +38,11 @@ namespace Auditorias_Conector
                 options.WorkerCount = 1; // Limitar la cantidad de trabajadores
             });
 
+            services.AddHttpClient("Core", httpClient =>
+            {
+                httpClient.BaseAddress = new Uri(Configuration["Core"]);
+            });
+
             // Configuración de Swagger
             services.ConfigureSwagger(Configuration, "v1");
 
@@ -54,6 +59,7 @@ namespace Auditorias_Conector
 
             // Registro explícito del TeamplaceConnectorClient y AuditoriasService
             services.AddScoped<TeamplaceConnectorClient>();
+            services.AddScoped<SipoCoreClient>();
             services.AddScoped<AuditoriasService>();
 
             // Registrar IHttpClientFactory

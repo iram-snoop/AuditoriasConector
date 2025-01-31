@@ -40,8 +40,6 @@ namespace Auditorias_Conector.DataAccess
             }
         }
 
-
-
         public async Task<List<GetNombreByIdExterna>> NumeroTransaccion(string identificadorExterno)
         {
             try
@@ -66,5 +64,7 @@ namespace Auditorias_Conector.DataAccess
                 throw new Exception(e.Message);
             }
         }
+
+
     }
 }
